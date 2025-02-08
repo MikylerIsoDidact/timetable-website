@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Timetable</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box;
+        }
+        button { 
+            padding: 12px 25px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        button:hover { background-color: #45a049; }
+        .confirmation { 
+            margin-top: 20px; 
+            padding: 15px; 
+            background-color: #e8f5e9; 
+            border-radius: 4px; 
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Timetable Registration</h1>
+    <form id="timetableForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" required>
+        </div>
+        <div class="form-group">
+            <label for="studentNumber">Student Number:</label>
+            <input type="text" id="studentNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="groupNumber">Group Number:</label>
+            <input type="text" id="groupNumber" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <div class="confirmation" id="confirmationMsg">
+        Data saved successfully! File: <span id="fileName"></span>
+    </div>
+
+    <script>
+        document.getElementById('timetableForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                studentNumber: document.getElementById('studentNumber').value,
+                groupNumber: document.getElementById('groupNumber').value,
+                timestamp: new Date().toISOString()
+            };
+
+            // Create CSV content
+            const csvContent = `Name,Surname,Student Number,Group Number,Timestamp\n${data.name},${data.surname},${data.studentNumber},${data.groupNumber},${data.timestamp}`;
+            
+            // Create filename with date
+            const fileName = `timetable_${data.timestamp.split('T')[0]}.csv`;
+            
+            // Save file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show confirmation
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('confirmationMsg').style.display = 'block';
+            this.reset();
+        });
+    </script>
+</body>
+</html>
